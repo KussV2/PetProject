@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users edit and create page</title>
+</head>
+<body>
+<form th:action="@{${user.id} != null ? '/users/update/' + ${user.id} : '/users'}"
+      th:object="${user}" method="post">
+
+    <input type="text" th:field="*{name}" placeholder="Name"/>
+
+    <input type="password" th:field="*{password}" placeholder="Password"/>
+
+    <select name="role">
+        <option value="ROLE_ADMIN">Admin</option>
+        <option value="ROLE_USER">User</option>
+        <option value="ROLE_GUEST">Guest</option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>
+</body>

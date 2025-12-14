@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: pet
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/PetProjectDB
+    username: root
+    password: Sql$$uck$
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none   # prevents Hibernate from creating/updating the schema
+    show-sql: true

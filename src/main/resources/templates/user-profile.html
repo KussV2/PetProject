@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Your Profile</title>
+</head>
+<body>
+
+<h1>Welcome, [[${user.name}]]!</h1>
+
+<form action="/user-profile/update" method="post" th:object="${user}">
+    <label>Name:</label>
+    <input type="text" th:field="*{name}"><br>
+
+    <label>New Password (optional):</label>
+    <input type="password" th:field="*{password}"><br>
+
+    <button type="submit">Save changes</button>
+</form>
+
+<!-- Admin-only button -->
+<div sec:authorize="hasAuthority('ROLE_ADMIN')">
+    <a href="/users">Manage All Users</a>
+</div>
+
+</body>
+</html>
