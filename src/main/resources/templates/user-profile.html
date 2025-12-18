@@ -18,6 +18,25 @@
     <button type="submit">Save changes</button>
 </form>
 
+<h2>Your pets</h2>
+
+<ul>
+    <li th:each="pet : ${pets}">
+        <span th:text="${pet.name}"></span>
+        (<span th:text="${pet.type}"></span>)
+        <form th:action="@{/user-profile/pets/delete/{id}(id=${pet.id})}" method="post">
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+
+<h3>Add pet</h3>
+<form th:action="@{/user-profile/pets}" method="post" th:object="${pet}">
+    <input th:field="*{name}" placeholder="Name"/>
+    <input th:field="*{type}" placeholder="Type"/>
+    <button type="submit">Add</button>
+</form>
+
 <!-- Admin-only button -->
 <div sec:authorize="hasAuthority('ROLE_ADMIN')">
     <a href="/users">Manage All Users</a>

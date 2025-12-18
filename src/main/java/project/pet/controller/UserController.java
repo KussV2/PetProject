@@ -8,8 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import project.pet.DTO.UserDTO;
+import project.pet.entity.Pet;
 import project.pet.entity.User;
+import project.pet.repository.PetRepository;
 import project.pet.repository.UserRepository;
+import project.pet.service.PetService;
 import project.pet.service.UserService;
 
 
@@ -18,10 +21,12 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final PetService petService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService,  PetService petService) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.petService = petService;
     }
 
     @Operation(tags = "User")
@@ -56,12 +61,13 @@ public class UserController {
     /*
      * For future usage
      */
-//    @GetMapping("/users/edit/{id}")
-//    public String showEditForm(@PathVariable Integer id, Model model) {
-//        User user = userRepository.findById(id).orElseThrow();
-//        model.addAttribute("user", user);
-//        return "user-form";
-//    }
+    @GetMapping("/users/edit/{id}")
+    public String showEditForm(@PathVariable Integer id, Model model) {
+        User user = userRepository.findById(id).orElseThrow();
+        model.addAttribute("user", user);
+        return "user-form";
+    }
+
     @Operation(tags = "User")
     @PostMapping("/users/update/{id}")
     public String updateUser(@PathVariable Integer id, @ModelAttribute User updatedUser) {
@@ -76,11 +82,22 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @Operation(tags = "User")
+    @GetMapping("/users/{id}/pets")
+    public String adminUserPets(@PathVariable Integer id, Model model) {
+        User user = userRepository.findById(id).orElseThrow();
+        model.addAttribute("user", user);
+        model.addAttribute("pets", user.getPets());
+        return "admin-user-pets";
+    }
+
     @Operation(tags = "Profile")
     @GetMapping("/user-profile")
     public String getUserProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userRepository.findByName(userDetails.getUsername()).orElseThrow();
         model.addAttribute("user", user);
+        model.addAttribute("pets", petService.getUserPets(user.getName()));
+        model.addAttribute("pet", new Pet());
         return "user-profile";
     }
 
@@ -96,6 +113,23 @@ public class UserController {
     public String updateProfile(@AuthenticationPrincipal UserDetails userDetails, @ModelAttribute User updatedUser) {
         //userService.updateUser(updatedUser.getId(), updatedUser);
         userService.updateProfile(userDetails.getUsername(), updatedUser);
+        return "redirect:/user-profile";
+    }
+
+    @Operation(tags = "Profile")
+    @PostMapping("/user-profile/pets")
+    public String addPet(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute Pet pet
+    ) {
+        petService.createPet(userDetails.getUsername(), pet);
+        return "redirect:/user-profile";
+    }
+
+    @Operation(tags = "Profile")
+    @PostMapping("/user-profile/pets/delete/{id}")
+    public String deletePet(@PathVariable Integer id) {
+        petService.deletePet(id);
         return "redirect:/user-profile";
     }
 }

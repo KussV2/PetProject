@@ -32,8 +32,10 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN")
                         .requestMatchers("/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers("/user-profile/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/**").authenticated()
+
                 ).formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login").defaultSuccessUrl("/user-profile", true)
